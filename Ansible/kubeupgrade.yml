@@ -1,0 +1,20 @@
+- hosts: kubemaster
+  gather_facts: False
+  roles:
+    - kubemaster-upgrade
+  tags:
+    - kubemaster-upgrade
+
+- hosts: kubeproxy
+  gather_facts: False
+  roles:
+    - kubeproxy-upgrade
+  tags:
+    - kubeproxy-upgrade
+
+- hosts: kubeproxy
+  gather_facts: False
+  roles:
+    - kube-upgrade
+  tags:
+    - kube-upgrade

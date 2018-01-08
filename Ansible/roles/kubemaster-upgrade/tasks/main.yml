@@ -1,0 +1,10 @@
+---
+- name: download Required Image
+  shell: docker pull {{ item }}:{{ Image_vers }}
+  register: installed
+  with_items:
+    - gcr.io/google_containers/kube-apiserver-amd64
+    - gcr.io/google_containers/kube-scheduler-amd64
+    - gcr.io/google_containers/kube-controller-manager-amd64
+    - gcr.io/google_containers/kube-proxy-amd64
+

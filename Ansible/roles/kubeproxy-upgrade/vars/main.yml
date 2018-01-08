@@ -1,0 +1,4 @@
+Kube_Master: "172.16.1.155"     #-Node ip for kube node
+Node_name: "rfs"    #- Hostname for kube node
+image_name: "image name"   # -Image name for kubelet
+Image_vers: "v"    # - Image version

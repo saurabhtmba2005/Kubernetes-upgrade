@@ -1,0 +1,54 @@
+---
+
+- name: Drain action on node
+  shell: ssh {{ Kube_Master }} "kubectl drain {{ Node_name }} --ignore-daemonsets=true --grace-period=0 --force=true"
+  register: Cordon
+
+- wait_for: timeout=10
+
+- name: stop kubelet
+  when: Cordon|success
+  shell: "systemctl stop kubelet"
+  register: Kubelet
+
+- name: Adding Configuration file
+  when: Kubelet|success
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+  with_items:
+    - { src: 'kubelet', dest: '/usr/bin/kubelet' }
+
+- name: stop kubelet
+  when: Cordon|success
+  shell: "systemctl restart kubelet"
+  register: Kubelet_up
+
+- wait_for: timeout=30
+
+- name: node_status
+  when: Kubelet_up|success
+  shell: ssh {{ Kube_Master }} "kubectl get nodes {{ Node_name }}" |awk  '{print $2}' |grep -v STATUS|awk -F "," '{print $1}'
+  register: nodestatus
+
+- debug: msg:"{{nodestatus.stdout}}"
+- set_fact: r="{{nodestatus.stdout_lines}}"
+- debug: var=r.0
+
+- name: uncordon node
+  when: r.0 == "Ready"
+  shell: ssh {{ Kube_Master }} "kubectl uncordon {{ Node_name }}"
+
+- name: kube proxy list
+  when: r.0 == "Ready"
+  shell: ssh {{ Kube_Master }} "kubectl -n kube-system get pods -o wide -l name=kube-proxy-amd64 |grep {{ Node_name }}" |awk  '{print $1}'
+  register: proxystatus
+
+- debug: msg="{{proxystatus.stdout_lines}}"
+
+- name: kube proxy restart
+  when: r.0 == "Ready"
+  shell: ssh {{ Kube_Master }} "kubectl -n kube-system delete pods {{ item }}"
+  with_items: "{{proxystatus.stdout_lines}}"
+
+- wait_for: timeout=120

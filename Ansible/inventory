@@ -1,0 +1,10 @@
+
+[kubemaster]
+kubemaster1
+kubemaster2
+kubemaster3
+
+[kubeproxy]
+kubenode1
+kubenode2
+kubenode3

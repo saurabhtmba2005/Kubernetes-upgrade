@@ -1,0 +1,19 @@
+# kubernetes kubelet config
+
+KUBELET_ADDRESS="--address=0.0.0.0 --port=10250 --node-ip={{ node_ip }} --hostname-override={{ node_hostname }}"
+
+# pod infrastructure container
+KUBELET_POD_INFRA_CONTAINER="--pod-infra-container-image=registry.access.redhat.com/rhel7/pod-infrastructure:latest"
+
+# Add your own!
+KUBELET_ARGS="--kubeconfig=/etc/kubernetes/kubeadminconfig --require-kubeconfig=true --pod-manifest-path=/etc/kubernetes/manifests --cgroup-driver=cgroupfs"
+
+# set log
+KUBE_LOGTOSTDERR="--logtostderr=true --v=0"
+
+# Should this cluster be allowed to run privileged docker containers
+KUBE_ALLOW_PRIV="--allow-privileged=true"
+
+# kube dns 
+#KUBELET_DNS_ARGS="--cluster-dns=100.64.0.10 --cluster-domain=kubernetes"
+KUBELET_DNS_ARGS="--cluster-dns=100.64.100.10,172.16.1.159,172.16.1.246,172.16.1.247"

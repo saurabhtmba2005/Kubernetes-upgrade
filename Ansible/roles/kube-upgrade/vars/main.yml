@@ -1,0 +1,2 @@
+Kube_Master: "172.16.7.11"          #-Node ip for kube node
+Node_name: "rfs"    #- Hostname for kube node
